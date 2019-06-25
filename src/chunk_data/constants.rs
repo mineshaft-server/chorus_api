@@ -1,0 +1,3 @@
+pub const CHUNK_WIDTH: i32 = 16;
+pub const CHUNK_HEIGHT: i32 = 256;
+pub const BLOCK_COUNT: i32 = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
