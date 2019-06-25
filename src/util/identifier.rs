@@ -1,3 +1,11 @@
+#[cfg(test)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+pub struct Identifier {
+  pub namespace: String,
+  pub id: String
+}
+
+#[cfg(not(test))]
 #[derive(Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub struct Identifier {
   namespace: String,
@@ -5,15 +13,16 @@ pub struct Identifier {
 }
 
 impl Identifier {
-  pub fn new(namespace: &String, id: &String) -> Identifier {
+  pub fn new(namespace: &str, id: &str) -> Identifier {
     return Identifier {
-      namespace: namespace.clone(),
-      id: id.clone(),
+      namespace: String::from(namespace),
+      id: String::from(id),
     }
   }
 
-  pub fn from(string: &String) -> Identifier {
-    let parts: Vec<&str> = string.split(":").collect();
+  pub fn from(string: &str) -> Identifier {
+    let temp = String::from(string);
+    let parts: Vec<&str> = temp.split(":").collect();
     if parts.len() > 1 {
       return Identifier {
         namespace: String::from(parts[0]),
@@ -22,7 +31,7 @@ impl Identifier {
     } else {
       return Identifier {
         namespace: String::from("minecraft"),
-        id: String::from(parts[1]),
+        id: String::from(parts[0]),
       }
     }
   }
