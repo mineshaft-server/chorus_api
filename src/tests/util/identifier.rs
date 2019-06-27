@@ -47,5 +47,5 @@ pub fn identifier_equality() {
 pub fn identifier_inequality() {
   let id1 = Identifier::new("minecraft", "villager");
   let id2 = Identifier::new("minecraft", "zombie");
-  assert!(id1 == id2);
+  assert!(id1 != id2);
 }
