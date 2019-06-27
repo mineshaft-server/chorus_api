@@ -12,8 +12,7 @@ pub fn reading_block_info_works() {
 
   let mut block_info = chunk_block.get(0,0,0);
 
-  assert_eq!(block_info.0, 0x0301);
-  assert_eq!(block_info.1, 2);
+  assert_eq!(block_info, Some((0x0301, 2)));
 
   // Setup for odd index test
   chunk_block.ids[0] = 0;
@@ -27,8 +26,31 @@ pub fn reading_block_info_works() {
   // Get the info
   block_info = chunk_block.get(1,0,0);
 
-  assert_eq!(block_info.0, 0x0301);
-  assert_eq!(block_info.1, 2);
+  assert_eq!(block_info, Some((0x0301, 2)));
+}
+
+#[test]
+pub fn reading_block_info_invalid_y_returns_air() {
+  let chunk_block = ChunkBlock::new();
+
+  assert_eq!(chunk_block.get(1,275,1), Some((0,0)));
+  assert_eq!(chunk_block.get(1,-275,1), Some((0,0)));
+}
+
+#[test]
+pub fn reading_block_info_invalid_x_fails() {
+  let chunk_block = ChunkBlock::new();
+
+  assert_eq!(chunk_block.get(17,32,1), None);
+  assert_eq!(chunk_block.get(-3,-32,1), None);
+}
+
+#[test]
+pub fn reading_block_info_invalid_z_fails() {
+  let chunk_block = ChunkBlock::new();
+
+  assert_eq!(chunk_block.get(1,32,19), None);
+  assert_eq!(chunk_block.get(1,-32,-3), None);
 }
 
 #[test]
@@ -56,10 +78,24 @@ pub fn writing_block_info_on_valid_block_return_true() {
 }
 
 #[test]
-pub fn writing_block_info_on_invalid_block_returns_false() {
+pub fn writing_block_info_on_invalid_y_returns_false() {
   let mut chunk_block = ChunkBlock::new();
   assert_eq!(chunk_block.set(1,264,2, (0, 0)), false);
   assert_eq!(chunk_block.set(1,-264,2, (0, 0)), false);
+}
+
+#[test]
+pub fn writing_block_info_on_invalid_x_returns_false() {
+  let mut chunk_block = ChunkBlock::new();
+  assert_eq!(chunk_block.set(17,32,2, (0, 0)), false);
+  assert_eq!(chunk_block.set(-2,32,2, (0, 0)), false);
+}
+
+#[test]
+pub fn writing_block_info_on_invalid_z_returns_false() {
+  let mut chunk_block = ChunkBlock::new();
+  assert_eq!(chunk_block.set(1,32,22, (0, 0)), false);
+  assert_eq!(chunk_block.set(1,-32,-2, (0, 0)), false);
 }
 
 #[test]

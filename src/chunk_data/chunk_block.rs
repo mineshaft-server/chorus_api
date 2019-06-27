@@ -35,44 +35,51 @@ impl ChunkBlock {
     }
   }
 
-  pub fn get(&self, x: i32, y: i32, z: i32) -> (u16, u8) {
+  pub fn get(&self, x: i32, y: i32, z: i32) -> Option<(u16, u8)> {
     let mut blockdata: u16 = 0;
     let mut data: u8 = 0;
     let index = ChunkBlock::get_index(x, y, z);
 
-    // If the index is valid, grab the block data
-    if index < BLOCK_COUNT && index > -1 {
-      let condition = index % 2 == 0;
+    // If x and z are within bounds
+    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH {
+      // If the index is valid, grab the block data
+      if index < BLOCK_COUNT && index > -1 {
+        let condition = index % 2 == 0;
 
-      // Build the block id
-      let mut extended = self.extended[(index / 2) as usize] as u16;
-      if condition {
-        extended &= 0xF;
-      } else {
-        extended = (extended & 0xF0) >> 4;
-      }
-      blockdata = self.ids[index as usize] as u16;
-      blockdata = blockdata | (extended << 8);
+        // Build the block id
+        let mut extended = self.extended[(index / 2) as usize] as u16;
+        if condition {
+          extended &= 0xF;
+        } else {
+          extended = (extended & 0xF0) >> 4;
+        }
+        blockdata = self.ids[index as usize] as u16;
+        blockdata = blockdata | (extended << 8);
 
-      // Grab the metadata for the block as well
-      data = self.data[(index / 2) as usize];
-      if condition {
-        data = data & 0x0F;
-      } else {
-        data = (data & 0xF0) >> EXTRA_SIZE;
+        // Grab the metadata for the block as well
+        data = self.data[(index / 2) as usize];
+        if condition {
+          data = data & 0x0F;
+        } else {
+          data = (data & 0xF0) >> EXTRA_SIZE;
+        }
       }
+
+      return Some((blockdata, data));
     }
 
-    return (blockdata, data);
+    // X or Z is out of bounds. Return none
+    return None;
   }
 
   pub fn set(&mut self, x: i32, y: i32, z: i32, block: (u16, u8)) -> bool {
     let index = ChunkBlock::get_index(x, y, z);
     let nibble_index = (index / 2) as usize;
 
+    // If x and z are within bounds
     // If the index is valid, set the block data.
     // Otherwise ignore
-    if index < BLOCK_COUNT && index > -1 {
+    if  x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && index < BLOCK_COUNT && index > -1 {
         let condition = index % 2 == 0;
 
       // Store the block with the extended block id
@@ -97,9 +104,10 @@ impl ChunkBlock {
     let index = ChunkBlock::get_index(x, y, z);
     let nibble_index = (index / 2) as usize;
 
+    // If x and z are within bounds
     // If the index is valid, set the block data.
     // Otherwise ignore
-    if index < BLOCK_COUNT && index > -1 {
+    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && index < BLOCK_COUNT && index > -1 {
         let condition = index % 2 == 0;
 
       // Store the block with the extended block id
@@ -124,7 +132,7 @@ impl ChunkBlock {
     let nibble_index = (index / 2) as usize;
 
     // If the index is valid, set the metadata.
-    if index < BLOCK_COUNT && index > -1 {
+    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && index < BLOCK_COUNT && index > -1 {
       let condition = index % 2 == 0;
 
       // Set the metadata
