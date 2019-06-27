@@ -1,6 +1,27 @@
 
 use crate::chunk_data::chunk_light::ChunkLight; // Subject
 use crate::chunk_data::constants::BLOCK_COUNT;
+use crate::chunk_data::util::LightTuple;
+
+#[test]
+pub fn reading_light_levels_works() {
+  // Setup block light levels
+  let mut block = vec![0 as u8; BLOCK_COUNT as usize];
+  let block0 = 0x01;
+  let block1 = 0x02;
+  block[0] = (block1 << 4) | block0;
+
+  // Setup block light levels
+  let mut sky = vec![0 as u8; BLOCK_COUNT as usize];
+  let sky0 = 0x01;
+  let sky1 = 0x02;
+  sky[0] = (sky1 << 4) | sky0;
+
+  let chunk_light = ChunkLight::from(block, sky);
+  assert_eq!(chunk_light.get(0,0,0), Some(LightTuple{block: block0, sky: sky0}));
+  assert_eq!(chunk_light.get(1,0,0), Some(LightTuple{block: block1, sky: sky1}));
+  assert_eq!(chunk_light.get(2,0,0), Some(LightTuple{block: 0, sky: 0}));
+}
 
 #[test]
 pub fn reading_block_light_level_works() {

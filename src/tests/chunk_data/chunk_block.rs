@@ -1,5 +1,6 @@
 use crate::chunk_data::chunk_block::ChunkBlock;
 use crate::chunk_data::constants::*;
+use crate::chunk_data::util::BlockTuple;
 
 #[test]
 pub fn reading_block_info_works() {
@@ -12,7 +13,7 @@ pub fn reading_block_info_works() {
 
   let mut block_info = chunk_block.get(0,0,0);
 
-  assert_eq!(block_info, Some((0x0301, 2)));
+  assert_eq!(block_info, Some(BlockTuple{block: 0x0301, metadata: 2}));
 
   // Setup for odd index test
   chunk_block.ids[0] = 0;
@@ -26,15 +27,15 @@ pub fn reading_block_info_works() {
   // Get the info
   block_info = chunk_block.get(1,0,0);
 
-  assert_eq!(block_info, Some((0x0301, 2)));
+  assert_eq!(block_info, Some(BlockTuple{block: 0x0301, metadata: 2}));
 }
 
 #[test]
 pub fn reading_block_info_invalid_y_returns_air() {
   let chunk_block = ChunkBlock::new();
 
-  assert_eq!(chunk_block.get(1,275,1), Some((0,0)));
-  assert_eq!(chunk_block.get(1,-275,1), Some((0,0)));
+  assert_eq!(chunk_block.get(1,275,1), Some(BlockTuple{block:0, metadata: 0}));
+  assert_eq!(chunk_block.get(1,-275,1), Some(BlockTuple{block:0, metadata: 0}));
 }
 
 #[test]

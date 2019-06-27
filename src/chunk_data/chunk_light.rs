@@ -1,7 +1,13 @@
 use std::vec::Vec;
 use super::constants::{
   CHUNK_WIDTH,
+  CHUNK_HEIGHT,
   BLOCK_COUNT,
+};
+
+use super::util::{
+  LightTuple,
+  get_index
 };
 
 #[cfg(test)]
@@ -31,16 +37,34 @@ impl ChunkLight {
     }
   }
 
-  pub fn get_sky(&self, x: i32, y: i32, z: i32) -> Option<u8> {
-    let index = ChunkLight::get_index(x, y, z);
-
+  pub fn get(&self, x: i32, y: i32, z: i32) -> Option<LightTuple> {
     if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH {
-      if index < BLOCK_COUNT {
-        if index > -1 {
+      if y < CHUNK_HEIGHT {
+        if y > -1 {
+          let index = get_index(x, y, z);
+          let nibble_index = index / 2;
+          let condition = index % 2 == 0;
+          let block = if condition { self.block[nibble_index] & 0x0F } else { (self.block[nibble_index] & 0xF0) >> 4 };
+          let sky = if condition { self.sky[nibble_index] & 0x0F } else { (self.sky[nibble_index] & 0xF0) >> 4 };
+          return Some(LightTuple{block: block, sky: sky});
+        }
+        return Some(LightTuple{block: 0, sky: 0});
+      }
+      return Some(LightTuple{block: 0, sky: 15});
+    }
+
+    return None;
+  }
+
+  pub fn get_sky(&self, x: i32, y: i32, z: i32) -> Option<u8> {
+    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH {
+      if y < CHUNK_HEIGHT {
+        if y > -1 {
+          let index = get_index(x, y, z);
           if index % 2 == 0 {
-            return Some(self.sky[(index / 2) as usize] & 0x0F);
+            return Some(self.sky[(index / 2)] & 0x0F);
           } else {
-            return Some((self.sky[(index / 2) as usize] & 0xF0) >> 4);
+            return Some((self.sky[(index / 2)] & 0xF0) >> 4);
           }
         } else {
           return Some(0);
@@ -54,37 +78,37 @@ impl ChunkLight {
   }
 
   pub fn set_sky(&mut self, x: i32, y: i32, z: i32, light: u8) -> bool {
-    let index = ChunkLight::get_index(x, y, z);
-    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && index < BLOCK_COUNT && index > -1 {
+    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && y < CHUNK_HEIGHT && y > -1 {
+      let index = get_index(x, y, z);
       let condition = index % 2 == 0;
       let actual_light = if condition { light & 0x0F } else { (light & 0x0F) << 4};
-      let current = self.sky[(index / 2) as usize];
-      self.sky[(index / 2) as usize] = actual_light | (current & (if condition { 0xF0 } else {0x0F}));
+      let current = self.sky[(index / 2)];
+      self.sky[(index / 2)] = actual_light | (current & (if condition { 0xF0 } else {0x0F}));
       return true;
     }
     return false;
   }
 
   pub fn set_block(&mut self, x: i32, y: i32, z: i32, light: u8) -> bool{
-    let index = ChunkLight::get_index(x, y, z);
-    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && index < BLOCK_COUNT && index > -1 {
+    if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH && y < CHUNK_HEIGHT && y > -1 {
+      let index = get_index(x, y, z);
       let condition = index % 2 == 0;
       let actual_light = if condition { light & 0x0F } else { (light & 0x0F) << 4};
-      let current = self.block[(index / 2) as usize];
-      self.block[(index / 2) as usize] = actual_light | (current & (if condition { 0xF0 } else {0x0F}));
+      let current = self.block[(index / 2)];
+      self.block[(index / 2)] = actual_light | (current & (if condition { 0xF0 } else {0x0F}));
       return true;
     }
     return false;
   }
 
   pub fn get_block(&self, x: i32, y: i32, z: i32) -> Option<u8> {
-    let index = ChunkLight::get_index(x, y, z);
     if x > -1 && x < CHUNK_WIDTH && z > -1 && z < CHUNK_WIDTH {
-      if index < BLOCK_COUNT && index > -1 {
+      if y < CHUNK_HEIGHT && y > -1 {
+        let index = get_index(x, y, z);
         if index % 2 == 0 {
-            return Some(self.block[(index / 2) as usize] & 0x0F);
+            return Some(self.block[(index / 2)] & 0x0F);
           } else {
-            return Some((self.block[(index / 2) as usize] & 0xF0) >> 4);
+            return Some((self.block[(index / 2)] & 0xF0) >> 4);
           }
       } else {
         return Some(0);
@@ -92,9 +116,5 @@ impl ChunkLight {
     }
 
     return None;
-  }
-
-  fn get_index(x: i32, y: i32, z: i32) -> i32 {
-    return (y * CHUNK_WIDTH * CHUNK_WIDTH) + (z * CHUNK_WIDTH) + x ;
   }
 }
