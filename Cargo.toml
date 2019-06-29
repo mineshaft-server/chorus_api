@@ -5,5 +5,7 @@ authors = ["Samuel Barney <samjbarney@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-rand = "0.6.5"
+json = "*"
 nalgebra = "0.18"
+nbtrs = {git="https://github.com/overviewer/nbtrs"}
+rand = "0.6.5"

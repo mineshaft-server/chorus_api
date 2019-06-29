@@ -9,6 +9,8 @@ pub mod defs {
     pub use super::definitions::block::BlockDef;
 }
 
+mod protocol;
+
 mod trait_defs;
 pub mod traits {
   pub use super::trait_defs::block::Block;

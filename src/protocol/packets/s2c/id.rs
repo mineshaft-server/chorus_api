@@ -17,7 +17,7 @@ pub enum S2CPacketID {
   ServerDifficulty = 0xD,
   ChatMessage = 0xE,
   MultiblockChange = 0xF,
-  TabComplete = 0x10;
+  TabComplete = 0x10,
   DeclareCommands = 0x11,
   ConfirmTransation = 0x12,
   CloseWindow = 0x13,

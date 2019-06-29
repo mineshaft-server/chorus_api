@@ -1,5 +1,4 @@
 pub enum C2SPacketID {
-  Handshake = 0x0,
   TeleportConfirm = 0x0,
   QueryBlockNBT = 0x1,
   ChatMessage = 0x2,
@@ -16,7 +15,7 @@ pub enum C2SPacketID {
   UseEntity = 0xD,
   KeepAlive = 0xE,
   Player = 0xF,
-  PlayerPosition 0x10,
+  PlayerPosition = 0x10,
   PlayerPositionAndLook = 0x11,
   PlayerLook = 0x12,
   VehicleMove = 0x13,
