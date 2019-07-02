@@ -35,4 +35,8 @@ impl Identifier {
       }
     }
   }
+
+  pub fn to_string(&self) -> String {
+    return format!("{}:{}", self.namespace, self.id);
+  }
 }
