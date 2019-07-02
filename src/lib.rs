@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 mod chunk_data;
 pub mod chunk {
     pub use super::chunk_data::chunk_light::*;
