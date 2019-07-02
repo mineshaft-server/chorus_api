@@ -1,5 +1,4 @@
 use crate::chunk_data::chunk_block::ChunkBlock;
-use crate::chunk_data::constants::*;
 use crate::chunk_data::util::BlockTuple;
 
 #[test]
