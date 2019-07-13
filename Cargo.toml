@@ -7,5 +7,4 @@ edition = "2018"
 [dependencies]
 json = "*"
 nalgebra = "0.18"
-nbtrs = {git="https://github.com/overviewer/nbtrs"}
 rand = "0.6.5"

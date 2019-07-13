@@ -1,7 +1,10 @@
 extern crate json;
+
 use super::types::{
   chat::Chat,
   position::Position,
+  slot::Slot,
+  nbt::NBT,
 };
 
 pub fn read_byte(data: &mut Vec<u8>) -> i8 {
@@ -263,6 +266,27 @@ pub fn read_position(data: &mut Vec<u8>) -> Position {
 pub fn write_position(data: &mut Vec<u8>, pos: &Position) {
   let long = (((pos.x as u64) & 0x3FFFFFF) << 38) | (((pos.y as u64) & 0xFFF) << 26) | ((pos.z as u64) & 0x3FFFFFF);
   write_ulong(data, &long);
+}
+
+pub fn read_nbt(data: &mut Vec<u8>) -> NBT {
+  let result = NBT::from_raw(data);
+  return result;
+}
+
+pub fn write_nbt(data: &mut Vec<u8>, value: &NBT) {
+  data.extend(value.to_raw());
+}
+
+pub fn read_slot(data: &mut Vec<u8>) -> Slot {
+  let mut slot = Slot { item_count: 0, item_id: None, nbt: None};
+  let exists = read_ubyte(data);
+
+  if exists == 1 {
+    slot.item_id = read_varint(data);
+    slot.item_count = read_byte(data);
+    slot.nbt = Some(read_nbt(data));
+  }
+  return slot;
 }
 
 pub trait Packet {

@@ -1,4 +1,3 @@
-extern crate nbtrs;
-use nbtrs::Tag;
+use crate::nbt::Tag;
 
 pub type NBT = Tag;
