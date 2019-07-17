@@ -156,7 +156,12 @@ pub fn read_varint(data: &mut Vec<u8>, default: i32) -> i32 {
   let mut result = 0;
   let mut read;
   while {
-    read = read_ubyte(data);
+    if data.len() > 0 {
+      read = read_ubyte(data);
+    } else {
+      error!(target: "parsing error", "Varint: No bytes left in buffer. Using default [{}]", default);
+      return default;
+    }
     let value: i32 = (read as i32) & 0b01111111;
     result |= value << (7 * num_read);
     num_read = num_read + 1;
