@@ -11,7 +11,7 @@ pub mod defs {
     pub use super::definitions::block::BlockDef;
 }
 
-mod nbt;
+pub mod nbt;
 
 mod protocol;
 
