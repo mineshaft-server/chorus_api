@@ -223,7 +223,9 @@ pub fn read_string(data: &mut Vec<u8>, default: String) -> String {
   let len = read_varint(data, -1);
   if len != -1 {
     if (len as usize) <= data.len() {
-      return String::from_utf8(data.drain(..(len as usize + 1)).collect()).or(Ok(default)).unwrap();
+      let mut tmp: Result<String, std::string::FromUtf8Error> =String::from_utf8(data.drain(..(len as usize + 1)).collect());
+      tmp = tmp.or(Ok(default));
+      return tmp.unwrap();
     } else {
       error!(target: "parsing error", "Reading string: Requested length [{}] is greater than remaining buffer [{}]. Clearing buffer and using default [{}]", len, data.len(), default);
       data.clear();
