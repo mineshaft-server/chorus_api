@@ -1,13 +1,13 @@
-pub use crate::protocol::util::*;
-pub use crate::protocol::types::{
+use crate::protocol::util::*;
+use crate::protocol::types::{
   chat::Chat,
   nbt::Tag,
   position::Position,
   slot::Slot
 };
-pub use crate::util::identifier::Identifier;
+use crate::util::identifier::Identifier;
 extern crate log;
-pub use log::error;
+use log::error;
 
 #[doc(hidden)]
 #[macro_export]
@@ -38,7 +38,7 @@ macro_rules! default_type_value {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! write_field {
-  ($func:ident $target:ident $field:ident $raw:ident) => {$func(&mut $raw, &$target.$field);};
+  ($func:ident $target:ident $field:ident $raw:ident) => { $func(&mut $raw, &$target.$field) };
 }
 
 #[doc(hidden)]

@@ -1,4 +1,5 @@
-use crate::protocol::packets::internal::*;
+#[macro_use]
+use crate::protocol::packets::internal::define_packet;
 
 define_packet!(AdvancementTab, {
   action: i32,
