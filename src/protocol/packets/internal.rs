@@ -9,6 +9,7 @@ pub use crate::util::identifier::Identifier;
 extern crate log;
 pub use log::error;
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! internal_type {
   (chat) => {Chat};
@@ -21,6 +22,7 @@ macro_rules! internal_type {
   ($any:ty) => {$any};
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! default_type_value {
   (bool) => {false};
@@ -33,11 +35,13 @@ macro_rules! default_type_value {
   ($any:ty) => {0};
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! write_field {
   ($func:ident $target:ident $field:ident $raw:ident) => {$func(&mut $raw, &$target.$field);};
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! write {
   (i8 $target:ident $field:ident $raw:ident) => { write_field!(write_byte $target $field $raw) };
@@ -62,6 +66,7 @@ macro_rules! write {
   (varlong $target:ident $field:ident $raw:ident) => { write_field!(write_varlong $target $field $raw) };
 }
 
+#[doc(hidden)]
 #[macro_export]
 macro_rules! read {
   (i8 $target:ident $field:ident $raw:ident) => {{
@@ -236,7 +241,7 @@ macro_rules! read {
   }};
 }
 
-#[macro_export]
+#[macro_export(local_inner_macros)]
 macro_rules! define_packet {
   ($name:ident, {$($key:ident: $type:ident),*}) => {
     #[derive(Debug)]

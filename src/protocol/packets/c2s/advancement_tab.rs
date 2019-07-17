@@ -1,4 +1,3 @@
-#[macro_use]
 use crate::protocol::packets::internal::*;
 
 define_packet!(AdvancementTab, {
