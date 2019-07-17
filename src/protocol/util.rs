@@ -1,11 +1,21 @@
 extern crate json;
+extern crate log;
+use log::{error};
 
 use super::types::{
   chat::Chat,
   position::Position,
   slot::Slot,
-  nbt::NBT,
+  nbt::Tag,
 };
+
+pub fn read_bool(data: &mut Vec<u8>) -> bool {
+  return read_byte(data) == 1;
+}
+
+pub fn write_bool(data: &mut Vec<u8>, value: &bool) {
+  write_ubyte(data, &(if *value {1} else {0}));
+}
 
 pub fn read_byte(data: &mut Vec<u8>) -> i8 {
   return data.remove(0) as i8;
@@ -46,7 +56,7 @@ pub fn read_ushort(data: &mut Vec<u8>) -> u16 {
   return u16::from_be_bytes(_bytes);
 }
 
-pub fn write_ushort(data: &mut Vec<u8>, value: u16) {
+pub fn write_ushort(data: &mut Vec<u8>, value: &u16) {
   let bytes = value.to_be_bytes();
   data.reserve(2);
   write_ubyte(data, &bytes[0]);
@@ -141,7 +151,7 @@ pub fn write_double(data: &mut Vec<u8>, value: &f64) {
 
 // Custom minecraft types
 
-pub fn read_varint(data: &mut Vec<u8>) -> Option<i32> {
+pub fn read_varint(data: &mut Vec<u8>, default: i32) -> i32 {
   let mut num_read = 0;
   let mut result = 0;
   let mut read;
@@ -152,12 +162,13 @@ pub fn read_varint(data: &mut Vec<u8>) -> Option<i32> {
     num_read = num_read + 1;
     if num_read < 6 {}
     else {
-      return None;
+      error!(target: "parsing error", "Varint: Length of varint went over 5. Using default [{}]", default);
+      return default;
     }
     (read & 0b10000000) != 0
   } {}
 
-  return Some(result);
+  return result;
 }
 
 pub fn write_varint(data: &mut Vec<u8>, value: &i32) {
@@ -174,7 +185,7 @@ pub fn write_varint(data: &mut Vec<u8>, value: &i32) {
   } {}
 }
 
-pub fn read_varlong(data: &mut Vec<u8>) -> Option<i64> {
+pub fn read_varlong(data: &mut Vec<u8>, default: i64) -> i64 {
   let mut num_read = 0;
   let mut result = 0;
   let mut read;
@@ -185,16 +196,17 @@ pub fn read_varlong(data: &mut Vec<u8>) -> Option<i64> {
     num_read = num_read + 1;
     if num_read < 11 {}
     else {
-      return None;
+      error!(target: "parsing error", "Varlong: Length of varlong went over 10. Using default [{}]", default);
+      return default;
     }
     (read & 0b10000000) != 0
   } {}
 
-  return Some(result);
+  return result;
 }
 
-pub fn write_varlong(data: &mut Vec<u8>, value: &i32) {
-  let mut temp = *value as u32;
+pub fn write_varlong(data: &mut Vec<u8>, value: &i64) {
+  let mut temp = *value as u64;
   while {
     let mut byte: u8 = (temp as u8) & 0b01111111;
     temp = temp >> 7;
@@ -207,10 +219,20 @@ pub fn write_varlong(data: &mut Vec<u8>, value: &i32) {
   } {}
 }
 
-pub fn read_string(data: &mut Vec<u8>) -> Option<String> {
-  match read_varint(data) {
-    Some(length) => return String::from_utf8(data.drain(..(length as usize + 1)).collect()).ok(),
-    None => return None
+pub fn read_string(data: &mut Vec<u8>, default: String) -> String {
+  let len = read_varint(data, -1);
+  if len != -1 {
+    if (len as usize) <= data.len() {
+      return String::from_utf8(data.drain(..(len as usize + 1)).collect()).or(Ok(default)).unwrap();
+    } else {
+      error!(target: "parsing error", "Reading string: Requested length [{}] is greater than remaining buffer [{}]. Clearing buffer and using default [{}]", len, data.len(), default);
+      data.clear();
+      return default;
+    }
+  } else {
+    error!(target: "parsing error", "Reading String: Invalid varint provided as length. Clearing buffer and using default [{}]", default);
+    data.clear();
+    return default;
   }
 }
 
@@ -222,9 +244,11 @@ pub fn write_string(data: &mut Vec<u8>, value: &str) {
 }
 
 pub fn read_chat(data: &mut Vec<u8>) -> Option<Chat> {
-  match read_string(data,) {
-    Some(value) => return Some(json::from(value)),
-    None => return None
+  let string = read_string(data, String::from(""));
+  if string != "" {
+    return Some(json::from(string));
+  } else {
+    return None;
   }
 }
 
@@ -268,28 +292,45 @@ pub fn write_position(data: &mut Vec<u8>, pos: &Position) {
   write_ulong(data, &long);
 }
 
-pub fn read_nbt(data: &mut Vec<u8>) -> NBT {
-  let result = NBT::from_raw(data);
+pub fn read_nbt(data: &mut Vec<u8>) -> Tag {
+  let result = Tag::from_raw(data);
   return result;
 }
 
-pub fn write_nbt(data: &mut Vec<u8>, value: &NBT) {
+pub fn write_nbt(data: &mut Vec<u8>, value: &Tag) {
   data.extend(value.to_raw());
 }
 
-pub fn read_slot(data: &mut Vec<u8>) -> Slot {
-  let mut slot = Slot { item_count: 0, item_id: None, nbt: None};
+pub fn read_slot(data: &mut Vec<u8>) -> Option<Slot> {
+  let mut slot = Slot { item_count: 0, item_id: 0, nbt: Tag::TagEnd};
   let exists = read_ubyte(data);
 
   if exists == 1 {
-    slot.item_id = read_varint(data);
-    slot.item_count = read_byte(data);
-    slot.nbt = Some(read_nbt(data));
+    if data.len() > 0 {
+      slot.item_id = read_varint(data, -1);
+      if slot.item_id != -1 && data.len() > 1 {
+        slot.item_count = read_byte(data);
+        slot.nbt = read_nbt(data);
+      }
+    }
+    return None;
   }
-  return slot;
+  return Some(slot);
 }
 
-pub trait Packet {
-  fn to_raw(&self) -> Vec<u8>;
-  fn from_raw(data: &mut Vec<u8>) -> Self;
+pub fn write_slot(data: &mut Vec<u8>, slot: &Slot) {
+  if slot.item_count > 0 {
+    write_ubyte(data, &1);
+    write_varint(data, &slot.item_id);
+    write_byte(data, &slot.item_count);
+    write_nbt(data, &slot.nbt);
+  } else {
+    write_ubyte(data, &0);
+  }
+}
+
+pub trait Packet: Sized {
+  fn default() -> Self;
+  fn to_raw(&self, packet_id: i32) -> Vec<u8>;
+  fn from_raw(raw: &mut Vec<u8>) -> Option<Self>;
 }

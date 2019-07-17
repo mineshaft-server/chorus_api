@@ -1,3 +1,1 @@
-use crate::nbt::Tag;
-
-pub type NBT = Tag;
+pub use crate::nbt::Tag;

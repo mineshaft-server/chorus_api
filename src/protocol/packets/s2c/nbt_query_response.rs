@@ -1,6 +1,6 @@
-use crate::protocol::types::nbt::NBT;
+use crate::protocol::types::nbt::Tag;
 
 pub struct NBTQueryResponse {
   pub transaction_id: i32,
-  pub nbt: NBT,
+  pub nbt: Tag,
 }

@@ -1,7 +1,7 @@
-use super::nbt::NBT;
+use super::nbt::Tag;
 
 pub struct Slot {
   pub item_count: i8,
-  pub item_id: Option<i32>,
-  pub nbt: Option<NBT>,
+  pub item_id: i32,
+  pub nbt: Tag,
 }

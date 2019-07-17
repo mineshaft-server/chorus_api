@@ -60,15 +60,15 @@ pub fn test_write_varint() {
 pub fn test_read_varint() {
   let mut data: Vec<u8> = Vec::new();
   data.push(0x7F);
-  let mut value = util::read_varint(&mut data);
-  assert_eq!(value, Some(127));
+  let mut value = util::read_varint(&mut data, -1);
+  assert_eq!(value, 127);
   assert_eq!(data.len(), 0);
 
   data.push(0x80);
   data.push(0x01);
 
-  value = util::read_varint(&mut data);
-  assert_eq!(value, Some(128));
+  value = util::read_varint(&mut data, -1);
+  assert_eq!(value, 128);
   assert_eq!(data.len(), 0);
 
 
@@ -78,8 +78,8 @@ pub fn test_read_varint() {
   data.push(0xFF);
   data.push(0x07);
 
-  value = util::read_varint(&mut data);
-  assert_eq!(value, Some(2147483647));
+  value = util::read_varint(&mut data, -1);
+  assert_eq!(value, 2147483647);
   assert_eq!(data.len(), 0);
 
   data.push(0x80);
@@ -88,7 +88,7 @@ pub fn test_read_varint() {
   data.push(0x80);
   data.push(0x08);
 
-  value = util::read_varint(&mut data);
-  assert_eq!(value, Some(-2147483648));
+  value = util::read_varint(&mut data, -1);
+  assert_eq!(value, -2147483648);
   assert_eq!(data.len(), 0);
 }
