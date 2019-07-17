@@ -1,10 +1,8 @@
-use crate::protocol::types::position::Position;
-
-pub struct PlayerBlockPlacement {
-  pub location: Position,
-  pub face: i32,
-  pub hand: i32,
-  pub cursor_x: f32,
-  pub cursor_y: f32,
-  pub cursor_z: f32,
-}
+define_packet!(PlayerBlockPlacement, {
+  location: position,
+  face: varint,
+  hand: varint,
+  cursor_x: f32,
+  cursor_y: f32,
+  cursor_z: f32
+});

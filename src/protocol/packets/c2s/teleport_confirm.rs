@@ -1,3 +1,3 @@
-pub struct TeleportConfirm {
-  pub teleport_id: i32,
-}
+define_packet!(TeleportConfirm, {
+  teleport_id: varint
+});

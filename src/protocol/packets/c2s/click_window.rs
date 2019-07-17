@@ -1,10 +1,8 @@
-use crate::protocol::types::slot::Slot;
-
-pub struct ClickWindow {
-  pub window_id: u8,
-  pub slot: i16,
-  pub button: i8,
-  pub action: i16,
-  pub mode: i32,
-  pub clicked_item: Slot,
-}
+define_packet!(ClickWindow, {
+  window_id: u8,
+  slot: i16,
+  button: i8,
+  action: i16,
+  mode: varint,
+  clicked_item: slot
+});

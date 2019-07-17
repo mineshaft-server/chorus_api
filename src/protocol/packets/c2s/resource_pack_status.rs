@@ -1,3 +1,3 @@
-pub struct ResourcePackStatus {
-  pub result: i32,
-}
+define_packet!(ResourcePackStatus, {
+  result: varint
+});

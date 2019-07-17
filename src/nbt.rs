@@ -231,3 +231,7 @@ impl Tag {
     return Tag::TagLongArray(array);
   }
 }
+
+impl Default for Tag {
+  fn default() -> Self { Tag::TagEnd }
+}

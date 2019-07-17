@@ -1,4 +1,4 @@
-pub struct SetBeaconEffect {
-  pub primary: i32,
-  pub secondary: i32,
-}
+define_packet!(SetBeaconEffect, {
+  primary: varint,
+  secondary: varint
+});

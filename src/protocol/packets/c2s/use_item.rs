@@ -1,3 +1,3 @@
-pub struct UseItem {
-  pub hand: i32,
-}
+define_packet!(UseItem, {
+  hand: varint
+});

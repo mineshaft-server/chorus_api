@@ -1,5 +1,5 @@
-pub struct EntityAction {
-  pub id: i32,
-  pub action_id: i32,
-  pub jump_boost: i32,
-}
+define_packet!(EntityAction, {
+  id: varint,
+  action_id: varint,
+  jump_boost: varint
+});

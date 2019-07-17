@@ -1,8 +1,8 @@
-pub struct UseEntity {
-  pub target: i32,
-  pub type_: i32,
-  pub x: Option<f32>,
-  pub y: Option<f32>,
-  pub z: Option<f32>,
-  pub hand: Option<i32>
-}
+define_packet!(UseEntity, {
+  target: varint,
+  type_: varint,
+  x: depends(type_ = 2) f32,
+  y: depends(type_ = 2) f32,
+  z: depends(type_ = 2) f32,
+  hand: depends(type_ != 1) varint
+});

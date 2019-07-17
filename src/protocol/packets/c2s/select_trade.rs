@@ -1,3 +1,3 @@
-pub struct SelectTrade {
-  pub slot: i32,
-}
+define_packet!(SelectTrade, {
+  slot: varint
+});

@@ -1,3 +1,3 @@
-pub struct NameItem {
-  pub name: String,
-}
+define_packet!(NameItem, {
+  name: string
+});

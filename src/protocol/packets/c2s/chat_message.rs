@@ -1,3 +1,3 @@
-pub struct ChatMessage {
-  pub message: String,
-}
+define_packet!(ChatMessage, {
+  message: string
+});

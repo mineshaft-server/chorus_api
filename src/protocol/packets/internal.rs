@@ -3,13 +3,15 @@ extern crate log;
 #[doc(hidden)]
 #[macro_export]
 macro_rules! internal_type {
-  (chat) => {Chat};
+  (chat) => {crate::protocol::types::chat::Chat};
   (identifier) => {crate::util::identifier::Identifier};
-  (slot) => {Slot};
+  (position) => {crate::protocol::types::position::Position};
+  (slot) => {crate::protocol::types::slot::Slot};
   (string) => {String};
   (uuid) => {u128};
   (varint) => {i32};
   (varlong) => {i64};
+  {dependant<$type:ident, $_1:ident = $_2:ident>} => {internal_type!($type)};
   ($any:ty) => {$any};
 }
 
@@ -17,13 +19,14 @@ macro_rules! internal_type {
 #[macro_export]
 macro_rules! default_type_value {
   (bool) => {false};
-  (chat) => {Chat::new_object()};
+  (chat) => {crate::protocol::types::chat::Chat::new_object()};
   (identifier) => {crate::util::identifier::Identifier::new("", "")};
-  (slot) => {Slot { item_count: 0, item_type: 0, nbt: None}};
+  (position) => {crate::protocol::types::position::Position {x: 0, y: 0, z: 0}};
+  (slot) => {crate::protocol::types::slot::Slot { item_count: 0, item_id: 0, nbt: crate::protocol::types::nbt::Tag::TagEnd}};
   (string) => {String::from("")};
   (varint) => {0};
   (varlong) => {0};
-  ($any:ty) => {0};
+  ($any:ty) => {0 as $any};
 }
 
 #[doc(hidden)]
@@ -45,16 +48,121 @@ macro_rules! write {
   (u64 $target:ident $field:ident $raw:ident) => { write_field!(write_ulong $target $field $raw) };
   (f32 $target:ident $field:ident $raw:ident) => { write_field!(write_float $target $field $raw) };
   (f64 $target:ident $field:ident $raw:ident) => { write_field!(write_double $target $field $raw) };
-  (bool $target:ident $field:ident $raw:ident) => {write_field!(write_bool $target $field $raw:ident)};
+  (bool $target:ident $field:ident $raw:ident) => {write_field!(write_bool $target $field $raw)};
   (chat $target:ident $field:ident $raw:ident) => {write_field!(write_chat $target $field $raw) };
   (identifier $target:ident $field:ident $raw:ident) => { crate::protocol::util::write_string(&mut $raw, &$target.$field.to_string()); };
   (nbt $target:ident $field:ident $raw:ident) => { write_field!(write_nbt $target $field $raw) };
   (position $target:ident $field:ident $raw:ident) => { write_field!(write_position $target $field $raw) };
   (slot $target:ident $field:ident $raw:ident) => { write_field!(write_slot $target $field $raw) };
-  (string $target:ident $field:ident $raw:ident) => { write_field!(write_string $target $field ) };
+  (string $target:ident $field:ident $raw:ident) => { write_field!(write_string $target $field $raw ) };
   (uuid $target:ident $field:ident $raw:ident) => { write_field!(write_uuid $target $field $raw)};
   (varint $target:ident $field:ident $raw:ident) => { write_field!(write_varint $target $field $raw) };
   (varlong $target:ident $field:ident $raw:ident) => { write_field!(write_varlong $target $field $raw) };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! write_conditional {
+  (i8 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_byte $target $field $raw);
+    }
+  }};
+  (u8 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_ubyte $target $field $raw);
+    }
+  }};
+  (i16 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_short $target $field $raw);
+    }
+  }};
+  (u16 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_ushort $target $field $raw);
+    }
+  }};
+  (i32 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_int $target $field $raw);
+    }
+  }};
+  (u32 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_uint $target $field $raw);
+    }
+  }};
+  (i64 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_long $target $field $raw);
+    }
+  }};
+  (u64 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_ulong $target $field $raw);
+    }
+  }};
+  (f32 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_float $target $field $raw);
+    }
+  }};
+  (f64 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_double $target $field $raw);
+    }
+  }};
+  (bool $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_bool $target $field $raw);
+    }
+  }};
+  (chat $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_chat $target $field $raw);
+    }
+  }};
+  (identifier $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      crate::protocol::util::write_string(&mut $raw, &$target.$field.to_string());
+    }
+  }};
+  (nbt $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $targe.$conditional == $($value)+ {
+      write_field!(write_nbt $target $field $raw);
+    }
+  }};
+  (position $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_position $target $field $raw);
+    }
+  }};
+  (slot $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_slot $target $field $raw);
+    }
+  }};
+  (string $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_string $target $field $raw);
+    }
+  }};
+  (uuid $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_uuid $target $field $raw);
+    }
+  }};
+  (varint $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_varint $target $field $raw);
+    }
+  }};
+  (varlong $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
+    if $target.$conditional == $($value)+ {
+      write_field!(write_varlong $target $field $raw);
+    }
+  }};
 }
 
 #[doc(hidden)]
@@ -205,7 +313,7 @@ macro_rules! read {
     }
   }};
   (uuid $target:ident $field:ident $raw:ident) => {{
-    if raw.len() > 15 {
+    if $raw.len() > 15 {
       $target.$field = crate::protocol::util::read_uuid($raw);
     } else {
       log::error!(target: "packet read", "Unable to read uuid from buffer");
@@ -232,31 +340,145 @@ macro_rules! read {
   }};
 }
 
+#[doc(hidden)]
+#[macro_export]
+macro_rules! build_struct_fields {
+  () => {};
+  ($field:ident: $type:ident) => {pub $key: internal_type!($type)};
+  ($field:ident: depends($_1:ident = $($_2:tt)+) $type:ident) => {pub $key: internal_type!($type)};
+  ($field:ident: $type:ident, $($tail:tt)*) => {
+    pub $key: internal_type!($type),
+    build_struct_fields!($($tail)*)
+  };
+  ($field:ident: depends($_1:ident = $($_2:tt)+) $type:ident, $($tail:tt)*) => {
+    pub $key: internal_type!($type),
+    build_struct_fields!($($tail)*)
+  };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! build_default_values {
+  () => {};
+  ($field:ident: $type:ident) => {$key: default_type_value!($type)};
+  ($field:ident: depends($_1:ident = $($_2:tt)+) $type:ident) => {$key: default_type_value!($type)};
+  ($field:ident: $type:ident, $($tail:tt)*) => {
+    $key: default_type_value!($type),
+    build_default_values!($($tail)*)
+  };
+  ($field:ident: depends($_1:ident = $($_2:tt)+) $type:ident, $($tail:tt)*) => {
+    $key: default_type_value!($type),
+    build_default_values!($($tail)*)
+  };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! build_writes {
+  ($target:ident $raw:ident) => {};
+  ($target:ident $raw:ident $field:ident: $type:ident) => { write!($type $target $field $raw);};
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident = $($value:tt)+) $type:ident) => { write_conditional!($type $target $field $raw $conditional $($value)+);};
+  ($target:ident $raw:ident $field:ident: $type:ident, $($tail:tt)*) => {
+    write!($type $target $field $raw);
+    build_writes!($target $raw $($tail)*)
+  };
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident = $($value:tt)+) $type:ident, $($tail:tt)*) => {
+    write_conditional!($type $target $field $raw $conditional $($value)+);
+    build_writes!($target $raw $($tail)*)
+  };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! build_reads {
+  ($target:ident $raw:ident) => {};
+  ($target:ident $raw:ident $field:ident: $type:ident) => {};
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident = $($value:tt)+) $type:ident) => {};
+  ($target:ident $raw:ident $field:ident: $type:ident, $($tail:tt)*) => {};
+  ($target:ident $raw:ident $field:ident: depends($_1:ident = $($value:tt)+) $type:ident, $($tail:tt)*) => {};
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! build_struct {
+  // input is empty: time to output
+    (@munch () -> {$(#[$attr:meta])* struct $name:ident $(($id:ident: $ty:ty))*}) => {
+        $(#[$attr])* pub struct $name { $($id: $ty),* }
+    };
+
+    // throw on the last field
+    (@munch ($id:ident: depends($_1:ident = $($_2:tt)+) $ty:ident) -> {$($output:tt)*}) => {
+        build_struct!(@munch () -> {$($output)* ($id: internal_type!($ty))});
+    };
+
+    // throw on another field (not the last one)
+    (@munch ($id:ident: depends($_1:ident = $($_2:tt)+) $ty:ident, $($next:tt)*) -> {$($output:tt)*}) => {
+        build_struct!(@munch ($($next)*) -> {$($output)* ($id: internal_type!($ty))});
+    };
+
+    // throw on the last field
+    (@munch ($id:ident: $ty:ident) -> {$($output:tt)*}) => {
+        build_struct!(@munch () -> {$($output)* ($id: internal_type!($ty))});
+    };
+
+    // throw on another field (not the last one)
+    (@munch ($id:ident: $ty:ident, $($next:tt)*) -> {$($output:tt)*}) => {
+        build_struct!(@munch ($($next)*) -> {$($output)* ($id: internal_type!($ty))});
+    };
+
+    // entry point (this is where a macro call starts)
+    ($(#[$attr:meta])* struct $name:ident { $($input:tt)*} ) => {
+        build_struct!(@munch ($($input)*) -> {$(#[$attr])* struct $name});
+        //                 ^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        //                     input       output
+    }
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! build_default_return {
+  (@munch () -> $name:ident {$($tail:tt)*}) => { fn default() -> Self { return $name {$($tail)*}; } };
+
+  (@munch ($id:ident: depends($_1:ident = $($_2:tt)+) $ty:ident) -> {$($output:tt)*}) => {
+    build_default_return!(@munch ($(next)*) -> {$($output)* ($id: default_type_value!($ty))});
+  };
+
+  (@munch ($id:ident: $ty:ident) -> {$($output:tt)*}) => {
+    build_default_return!(@munch ($(next)*) -> {$($output)* ($id: default_type_value!($ty))});
+  };
+
+  (@munch ($id:ident: depends($_1:ident = $($_2:tt)+) $ty:ident, $($next:tt)*) -> {$($output:tt)*}) => {
+    build_default_return!(@munch ($(next)*) -> {$($output)* ($id: default_type_value!($ty))});
+  };
+
+  (@munch ($id:ident: $ty:ident, $($next:tt)*) -> {$($output:tt)*}) => {
+    build_default_return!(@munch ($(next)*) -> {$($output)* ($id: default_type_value!($ty))});
+  };
+
+  ($name:ident $($tail:tt)*) => {
+    build_default_return!(@munch ($($tail)* -> $name {}));
+  }
+}
+
 #[macro_export(local_inner_macros)]
 macro_rules! define_packet {
-  ($name:ident, {$($key:ident: $type:ident),*}) => {
-    #[derive(Debug)]
-    pub struct $name {
-      $($key: internal_type!($type),)*
+  ($name:ident, {$($tail:tt)*}) => {
+    build_struct! {
+      #[derive(Debug,Default)]
+      struct $name {$($tail)*}
     }
 
     impl crate::protocol::util::Packet for $name {
-      fn default() -> Self {
-        return $name {
-          $($key: default_type_value!($type),)*
-        }
-      }
-
       fn to_raw(&self, packet_id: i32) -> Vec<u8>{
         let mut raw = Vec::new();
         crate::protocol::util::write_varint(&mut raw, &packet_id);
-        $(write!($type self $key raw);)*
+        build_writes!(self raw $($tail)*);
         return raw;
       }
 
       fn from_raw(raw: &mut Vec<u8>) -> Option<Self> {
         let mut packet = $name::default();
-        $(read!($type packet $key raw);)*
+        build_reads!(packet raw $($tail)*);
         return Some(packet);
       }
     }

@@ -1,5 +1,5 @@
-pub struct PlayerLook {
-  pub yaw: f32,
-  pub pitch: f32,
-  pub on_ground: bool,
-}
+define_packet!(PlayerLook, {
+  yaw: f32,
+  pitch: f32,
+  on_ground: bool
+});

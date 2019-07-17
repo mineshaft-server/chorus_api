@@ -1,8 +1,8 @@
-pub struct PlayerPositionLook {
-  pub x: f64,
-  pub y: f64,
-  pub z: f64,
-  pub yaw: f32,
-  pub pitch: f32,
-  pub on_ground: bool,
-}
+define_packet!(PlayerPositionLook, {
+  x: f64,
+  y: f64,
+  z: f64,
+  yaw: f32,
+  pitch: f32,
+  on_ground: bool
+});

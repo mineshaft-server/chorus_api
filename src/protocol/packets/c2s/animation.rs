@@ -1,3 +1,3 @@
-pub struct Animation {
-  pub hand: i32,
-}
+define_packet!(Animation, {
+  hand: varint
+});

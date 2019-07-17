@@ -1,3 +1,3 @@
-pub struct ClientStatus {
-  pub action_id: i32,
-}
+define_packet!(ClientStatus, {
+  action_id: varint
+});

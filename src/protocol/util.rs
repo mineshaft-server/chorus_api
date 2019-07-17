@@ -332,7 +332,6 @@ pub fn write_slot(data: &mut Vec<u8>, slot: &Slot) {
 }
 
 pub trait Packet: Sized {
-  fn default() -> Self;
   fn to_raw(&self, packet_id: i32) -> Vec<u8>;
   fn from_raw(raw: &mut Vec<u8>) -> Option<Self>;
 }

@@ -40,3 +40,7 @@ impl Identifier {
     return format!("{}:{}", self.namespace, self.id);
   }
 }
+
+impl Default for Identifier {
+  fn default() -> Self { Identifier::new("", "") }
+}

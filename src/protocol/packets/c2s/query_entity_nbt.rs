@@ -1,4 +1,4 @@
-pub struct QueryEntityNBT {
-  pub transaction_id: i32,
-  pub entity_id: i32,
-}
+define_packet!(QueryEntityNBT, {
+  transaction_id: varint,
+  entity_id: varint
+});

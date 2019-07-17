@@ -1,7 +1,7 @@
-pub struct VehicleMove {
-  pub x: f64,
-  pub y: f64,
-  pub z: f64,
-  pub yaw: f32,
-  pub pitch: f32,
-}
+define_packet!(VehicleMove, {
+  x: f64,
+  y: f64,
+  z: f64,
+  yaw: f32,
+  pitch: f32
+});

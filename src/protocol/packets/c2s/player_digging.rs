@@ -1,7 +1,5 @@
-use crate::protocol::types::position::Position;
-
-pub struct PlayerDigging {
-  pub status: i32,
-  pub location: Position,
-  pub face: i8,
-}
+define_packet!(PlayerDigging, {
+  status: varint,
+  location: position,
+  face: i8
+});

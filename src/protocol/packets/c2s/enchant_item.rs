@@ -1,4 +1,4 @@
-pub struct EnchantItem {
-  pub window_id: i8,
-  pub enchantment: i8,
-}
+define_packet!(EnchantItem, {
+  window_id: i8,
+  enchantment: i8
+});

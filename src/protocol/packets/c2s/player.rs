@@ -1,3 +1,3 @@
-pub struct Player {
-  pub on_ground: bool,
-}
+define_packet!(Player, {
+  on_ground: bool
+});

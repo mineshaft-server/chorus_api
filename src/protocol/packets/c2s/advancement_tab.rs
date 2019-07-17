@@ -1,6 +1,4 @@
-use crate::protocol::packets::internal;
-
 define_packet!(AdvancementTab, {
-  action: i32,
+  action: varint,
   id: identifier
 });

@@ -1,4 +1,4 @@
-pub struct TabComplete {
-  pub transaction_id: i32,
-  pub text: String,
-}
+define_packet!(TabComplete, {
+  transaction_id: varint,
+  text: string
+});

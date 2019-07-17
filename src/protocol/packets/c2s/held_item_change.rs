@@ -1,3 +1,3 @@
-pub struct HeldItemChange {
-  pub slot: i16,
-}
+define_packet!(HeldItemChange, {
+  slot: i16
+});

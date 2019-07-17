@@ -1,5 +1,5 @@
-pub struct SteerVehicle {
-  pub sideways: f32,
-  pub forward: f32,
-  pub flags: u8,
-}
+define_packet!(SteerVehicle, {
+  sideways: f32,
+  forward: f32,
+  flags: u8
+});

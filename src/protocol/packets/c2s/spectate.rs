@@ -1,3 +1,3 @@
-pub struct Spectate {
-  pub uuid: i128,
-}
+define_packet!(Spectate, {
+  uuid: uuid
+});

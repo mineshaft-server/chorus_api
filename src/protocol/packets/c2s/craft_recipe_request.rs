@@ -1,7 +1,5 @@
-use crate::util::identifier::Identifier;
-
-pub struct CraftRecipeRequest {
-  pub window_id: i8,
-  pub recipe: Identifier,
-  pub make_all: bool,
-}
+define_packet!(CraftRecipeRequest, {
+  window_id: i8,
+  recipe: identifier,
+  make_all: bool
+});

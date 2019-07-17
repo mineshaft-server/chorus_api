@@ -1,4 +1,4 @@
-pub struct SteerBoat {
-  pub left_paddle: bool,
-  pub right_paddle: bool,
-}
+define_packet!(SteerBoat, {
+  left_paddle: bool,
+  right_paddle: bool
+});

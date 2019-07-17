@@ -1,8 +1,6 @@
-use crate::protocol::types::position::Position;
-
-pub struct UpdateCommandBlock {
-  pub location: Position,
-  pub command: String,
-  pub mode: i32,
-  pub flags: i8,
-}
+define_packet!(UpdateCommandBlock, {
+  location: position,
+  command: string,
+  mode: varint,
+  flags: i8
+});
