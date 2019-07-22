@@ -3,5 +3,5 @@ define_packet!(OpenWindow, {
   window_type: string,
   window_title: chat,
   slot_count: u8,
-  entity_id: depends(window_type = "EntityHorse") i32,
+  entity_id: depends(window_type == "EntityHorse") i32,
 });

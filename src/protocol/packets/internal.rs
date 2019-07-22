@@ -5,14 +5,16 @@ extern crate log;
 macro_rules! internal_type {
   (chat) => {crate::protocol::types::chat::Chat};
   (identifier) => {crate::util::identifier::Identifier};
+  (nbt) => {crate::protocol::types::nbt::Tag};
   (position) => {crate::protocol::types::position::Position};
   (slot) => {crate::protocol::types::slot::Slot};
   (string) => {String};
   (uuid) => {u128};
   (varint) => {i32};
   (varlong) => {i64};
-  (Vec<$type:ident>) => {Vec<internal_type!(type)>};
-  {dependant<$type:ident, $_1:ident = $_2:ident>} => {internal_type!($type)};
+  (Vec<$type:ident>) => {Vec<internal_type!($type)>};
+  {depends($type:ident, $_1:ident = $_2:ident)} => {internal_type!($type)};
+  {depends($type:ident, $_1:ident != $_2:ident)} => {internal_type!($type)};
   ($any:ty) => {$any};
 }
 
@@ -22,6 +24,7 @@ macro_rules! default_type_value {
   (bool) => {false};
   (chat) => {crate::protocol::types::chat::Chat::new_object()};
   (identifier) => {crate::util::identifier::Identifier::new("", "")};
+  (nbt) => {crate::protocol::types::nbt::Tag::TagEnd};
   (position) => {crate::protocol::types::position::Position {x: 0, y: 0, z: 0}};
   (slot) => {crate::protocol::types::slot::Slot { item_count: 0, item_id: 0, nbt: crate::protocol::types::nbt::Tag::TagEnd}};
   (string) => {String::from("")};
@@ -64,107 +67,9 @@ macro_rules! write {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! write_conditional {
-  (i8 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_byte $target $field $raw);
-    }
-  }};
-  (u8 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_ubyte $target $field $raw);
-    }
-  }};
-  (i16 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_short $target $field $raw);
-    }
-  }};
-  (u16 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_ushort $target $field $raw);
-    }
-  }};
-  (i32 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_int $target $field $raw);
-    }
-  }};
-  (u32 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_uint $target $field $raw);
-    }
-  }};
-  (i64 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_long $target $field $raw);
-    }
-  }};
-  (u64 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_ulong $target $field $raw);
-    }
-  }};
-  (f32 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_float $target $field $raw);
-    }
-  }};
-  (f64 $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_double $target $field $raw);
-    }
-  }};
-  (bool $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_bool $target $field $raw);
-    }
-  }};
-  (chat $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_chat $target $field $raw);
-    }
-  }};
-  (identifier $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      crate::protocol::util::write_string(&mut $raw, &$target.$field.to_string());
-    }
-  }};
-  (nbt $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $targe.$conditional == $($value)+ {
-      write_field!(write_nbt $target $field $raw);
-    }
-  }};
-  (position $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_position $target $field $raw);
-    }
-  }};
-  (slot $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_slot $target $field $raw);
-    }
-  }};
-  (string $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_string $target $field $raw);
-    }
-  }};
-  (uuid $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_uuid $target $field $raw);
-    }
-  }};
-  (varint $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_varint $target $field $raw);
-    }
-  }};
-  (varlong $target:ident $field:ident $raw:ident $conditional:ident $($value:tt)+) => {{
-    if $target.$conditional == $($value)+ {
-      write_field!(write_varlong $target $field $raw);
-    }
-  }};
+macro_rules! conditions {
+  ($target:ident $conditional:ident eq $($value:tt)+) => { $target.$conditional == $($value)+ };
+  ($target:ident $conditional:ident neq $($value:tt)+) => { $target.$conditional != $($value)+ };
 }
 
 #[doc(hidden)]
@@ -277,7 +182,7 @@ macro_rules! read {
   }};
   (nbt $target:ident $field:ident $raw:ident) => {{
     let tag = crate::protocol::util::read_nbt($raw);
-    if let Tag::TagInvalid(reason) = tag {
+    if let crate::protocol::types::nbt::Tag::TagInvalid(reason) = tag {
       log::error!(target: "packet read", "Unable to read nbt from buffer. Reason: {}", reason);
       return None;
     } else {
@@ -379,13 +284,30 @@ macro_rules! build_default_values {
 macro_rules! build_writes {
   ($target:ident $raw:ident) => {};
   ($target:ident $raw:ident $field:ident: $type:ident) => { write!($type $target $field $raw);};
-  ($target:ident $raw:ident $field:ident: depends($conditional:ident = $($value:tt)+) $type:ident) => { write_conditional!($type $target $field $raw $conditional $($value)+);};
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident == $($value:tt)+) $type:ident) => {
+    if conditions!($target $conditional eq $($value)+) {
+      write!($type $target $field $raw);
+    }
+  };
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident != $($value:tt)+) $type:ident) => {
+    if conditions!($target $conditional neq $($value)+) {
+      write!($type $target $field $raw);
+    }
+  };
   ($target:ident $raw:ident $field:ident: $type:ident, $($tail:tt)*) => {
     write!($type $target $field $raw);
     build_writes!($target $raw $($tail)*)
   };
-  ($target:ident $raw:ident $field:ident: depends($conditional:ident = $($value:tt)+) $type:ident, $($tail:tt)*) => {
-    write_conditional!($type $target $field $raw $conditional $($value)+);
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident == $($value:tt)+) $type:ident, $($tail:tt)*) => {
+    if conditions!($target $conditional eq $($value)+) {
+      write!($type $target $field $raw);
+    }
+    build_writes!($target $raw $($tail)*)
+  };
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident != $($value:tt)+) $type:ident, $($tail:tt)*) => {
+    if conditions!($target $conditional neq $($value)+) {
+      write!($type $target $field $raw);
+    }
     build_writes!($target $raw $($tail)*)
   };
 }
@@ -394,10 +316,33 @@ macro_rules! build_writes {
 #[macro_export]
 macro_rules! build_reads {
   ($target:ident $raw:ident) => {};
-  ($target:ident $raw:ident $field:ident: $type:ident) => {};
-  ($target:ident $raw:ident $field:ident: depends($conditional:ident = $($value:tt)+) $type:ident) => {};
-  ($target:ident $raw:ident $field:ident: $type:ident, $($tail:tt)*) => {};
-  ($target:ident $raw:ident $field:ident: depends($_1:ident = $($value:tt)+) $type:ident, $($tail:tt)*) => {};
+  ($target:ident $raw:ident $field:ident: $type:ident) => { read!($type $target $field $raw)};
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident == $($value:tt)+) $type:ident) => {
+    if conditions!($target $conditional eq $($value)+) {
+      read!($type $target $field $raw);
+    }
+  };
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident != $($value:tt)+) $type:ident) => {
+    if conditions!($target $conditional neq $($value)+) {
+      read!($type $target $field $raw);
+    }
+  };
+  ($target:ident $raw:ident $field:ident: $type:ident, $($tail:tt)*) => {
+    read!($type $target $field $raw);
+    build_reads!($target $raw $($tail)*)
+  };
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident == $($value:tt)+) $type:ident, $($tail:tt)*) => {
+    if conditions!($target $conditional eq $($value)+) {
+      read!($type $target $field $raw);
+    }
+    build_reads!($target $raw $($tail)*)
+  };
+  ($target:ident $raw:ident $field:ident: depends($conditional:ident != $($value:tt)+) $type:ident, $($tail:tt)*) => {
+    if conditions!($target $conditional neq $($value)+) {
+      read!($type $target $field $raw);
+    }
+    build_reads!($target $raw $($tail)*)
+  };
 }
 
 #[doc(hidden)]
@@ -409,12 +354,12 @@ macro_rules! build_struct {
     };
 
     // throw on the last field
-    (@munch ($id:ident: depends($_1:ident = $($_2:tt)+) $ty:ident) -> {$($output:tt)*}) => {
+    (@munch ($id:ident: depends($($_:tt)*) $ty:ident) -> {$($output:tt)*}) => {
         build_struct!(@munch () -> {$($output)* ($id: internal_type!($ty))});
     };
 
     // throw on another field (not the last one)
-    (@munch ($id:ident: depends($_1:ident = $($_2:tt)+) $ty:ident, $($next:tt)*) -> {$($output:tt)*}) => {
+    (@munch ($id:ident: depends($($_:tt)*) $ty:ident, $($next:tt)*) -> {$($output:tt)*}) => {
         build_struct!(@munch ($($next)*) -> {$($output)* ($id: internal_type!($ty))});
     };
 
@@ -479,7 +424,7 @@ macro_rules! define_packet {
       }
 
       fn from_raw(raw: &mut Vec<u8>) -> Option<Self> {
-        let packet = $name::default();
+        let mut packet = $name::default();
         build_reads!(packet raw $($tail)*);
         return Some(packet);
       }
