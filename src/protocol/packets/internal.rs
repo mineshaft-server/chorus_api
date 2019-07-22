@@ -11,6 +11,7 @@ macro_rules! internal_type {
   (uuid) => {u128};
   (varint) => {i32};
   (varlong) => {i64};
+  (Vec<$type:ident>) => {Vec<internal_type!(type)>};
   {dependant<$type:ident, $_1:ident = $_2:ident>} => {internal_type!($type)};
   ($any:ty) => {$any};
 }
@@ -26,6 +27,7 @@ macro_rules! default_type_value {
   (string) => {String::from("")};
   (varint) => {0};
   (varlong) => {0};
+  (Vec<$type:ident>) => {Vec::new()};
   ($any:ty) => {0 as $any};
 }
 
@@ -477,7 +479,7 @@ macro_rules! define_packet {
       }
 
       fn from_raw(raw: &mut Vec<u8>) -> Option<Self> {
-        let mut packet = $name::default();
+        let packet = $name::default();
         build_reads!(packet raw $($tail)*);
         return Some(packet);
       }
