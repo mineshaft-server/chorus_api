@@ -1,8 +1,6 @@
-use crate::protocol::types::position::Position;
-
-pub struct Effect {
-  pub id: i32,
-  pub location: Position,
-  pub data: i32,
-  pub relative_volume: bool,
-}
+define_packet!(Effect, {
+  id: varint,
+  location: position,
+  data: varint,
+  relative_volume: bool,
+});

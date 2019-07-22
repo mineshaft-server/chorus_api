@@ -1,4 +1,4 @@
-pub struct SetCooldown {
-  pub item_id: i32,
-  pub cooldown_ticks: i32,
-}
+define_packet!(SetCooldown, {
+  item_id: varint,
+  cooldown_ticks: varint,
+});

@@ -1,4 +1,4 @@
-pub struct DisplayScoreboard {
-  pub position: i8,
-  pub name: String,
-}
+define_packet!(DisplayScoreboard, {
+  position: i8,
+  name: string,
+});

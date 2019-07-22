@@ -1,4 +1,4 @@
-pub struct UnloadChunk {
-  pub x: i32,
-  pub z: i32,
-}
+define_packet!(UnloadChunk, {
+  x: i32,
+  z: i32,
+});

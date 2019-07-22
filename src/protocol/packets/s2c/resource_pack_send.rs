@@ -1,4 +1,4 @@
-pub struct ResourcePackSend {
-  pub url: String,
-  pub hash: String,
-}
+define_packet!(ResourcePackSend, {
+  url: string,
+  hash: string,
+});

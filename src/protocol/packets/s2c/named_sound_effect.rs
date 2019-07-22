@@ -1,11 +1,9 @@
-use crate::util::identifier::Identifier;
-
-pub struct NamedSoundEffect {
-  pub name: Identifier,
-  pub category: i32,
-  pub x: i32,
-  pub y: i32,
-  pub z: i32,
-  pub volume: f32,
-  pub pitch: f32,
-}
+define_packet!(NamedSoundEffect, {
+  name: identifier,
+  category: varint,
+  x: i32,
+  y: i32,
+  z: i32,
+  volume: f32,
+  pitch: f32,
+});

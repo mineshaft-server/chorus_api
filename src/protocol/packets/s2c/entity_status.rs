@@ -1,4 +1,4 @@
-pub struct EntityStatus {
-  pub entity_id: i32,
-  pub status: i8,
-}
+define_packet!(EntityStatus, {
+  entity_id: varint,
+  status: i8,
+});

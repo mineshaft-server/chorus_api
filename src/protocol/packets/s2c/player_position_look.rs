@@ -1,9 +1,9 @@
-pub struct PlayerPositionLook {
-  pub x: f64,
-  pub y: f64,
-  pub z: f64,
-  pub yaw: f32,
-  pub pitch: f32,
-  pub flags: u8,
-  pub teleport_id: i32,
-}
+define_packet!(PlayerPositionLook, {
+  x: f64,
+  y: f64,
+  z: f64,
+  yaw: f32,
+  pitch: f32,
+  flags: u8,
+  teleport_id: varint,
+});

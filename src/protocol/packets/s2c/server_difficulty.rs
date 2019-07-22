@@ -1,3 +1,3 @@
-pub struct ServerDifficulty {
-  pub difficulty: u8,
-}
+define_packet!(ServerDifficulty, {
+  difficulty: u8,
+});

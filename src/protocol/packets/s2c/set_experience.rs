@@ -1,5 +1,5 @@
-pub struct SetExperience {
-  pub exp_bar: f32,
-  pub level: i32,
-  pub total: i32,
-}
+define_packet!(SetExperience, {
+  exp_bar: f32,
+  level: varint,
+  total: varint,
+});

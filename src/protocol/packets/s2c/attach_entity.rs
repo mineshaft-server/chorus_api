@@ -1,4 +1,4 @@
-pub struct AttachEntity {
-  pub attached_id: i32,
-  pub holding_id: i32,
-}
+define_packet!(AttachEntity, {
+  attached_id: varint,
+  holding_id: varint,
+});

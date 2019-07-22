@@ -1,3 +1,3 @@
-pub struct Entity {
-  pub id: i32,
-}
+define_packet!(Entity, {
+  id: varint,
+});

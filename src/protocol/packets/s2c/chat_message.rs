@@ -1,6 +1,4 @@
-use crate::protocol::types::chat::Chat;
-
-pub struct ChatMessage {
-  pub chat: Chat,
-  pub position: i8,
-}
+define_packet!(ChatMessage, {
+  chat: chat,
+  position: i8,
+});

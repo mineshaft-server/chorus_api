@@ -1,5 +1,3 @@
-use crate::protocol::types::position::Position;
-
-pub struct OpenSignEditor {
-  pub location: Position,
-}
+define_packet!(OpenSignEditor, {
+  location: position,
+});

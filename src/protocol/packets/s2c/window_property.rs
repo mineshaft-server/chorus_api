@@ -1,5 +1,5 @@
-pub struct WindowProperty {
-  pub window_id: u8,
-  pub property: i16,
-  pub value: i16,
-}
+define_packet!(WindowProperty, {
+  window_id: u8,
+  property: i16,
+  value: i16,
+});

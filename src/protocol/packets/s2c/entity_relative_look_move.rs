@@ -1,9 +1,9 @@
-pub struct EntityRelativeLookMove {
-  pub entity_id: i32,
-  pub delta_x: i16,
-  pub delta_y: i16,
-  pub delta_z: i16,
-  pub yaw: i8,
-  pub pitch: i8,
-  pub on_ground: bool,
-}
+define_packet!(EntityRelativeLookMove, {
+  entity_id: varint,
+  delta_x: i16,
+  delta_y: i16,
+  delta_z: i16,
+  yaw: i8,
+  pitch: i8,
+  on_ground: bool,
+});

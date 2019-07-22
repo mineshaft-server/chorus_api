@@ -1,4 +1,4 @@
-pub struct TimeUpdate {
-  pub world_age: i64,
-  pub time_of_day: i64,
-}
+define_packet!(TimeUpdate, {
+  world_age: i64,
+  time_of_day: i64,
+});

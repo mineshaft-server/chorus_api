@@ -1,5 +1,3 @@
-use crate::protocol::types::position::Position;
-
-pub struct SpawnPosition {
-  pub location: Position,
-}
+define_packet!(SpawnPosition, {
+  location: position,
+});

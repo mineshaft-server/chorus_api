@@ -1,3 +1,3 @@
-pub struct CloseWindow {
-  pub window_id: u8,
-}
+define_packet!(CloseWindow, {
+  window_id: u8
+});

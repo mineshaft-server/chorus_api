@@ -1,6 +1,6 @@
-pub struct EntityLook {
-  pub entity_id: i32,
-  pub yaw: i8,
-  pub pitch: i8,
-  pub on_ground: bool,
-}
+define_packet!(EntityLook, {
+  entity_id: varint,
+  yaw: i8,
+  pitch: i8,
+  on_ground: bool,
+});

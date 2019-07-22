@@ -1,4 +1,4 @@
-pub struct EntityHeadLook {
-  pub id: i32,
-  pub yaw: i8,
-}
+define_packet!(EntityHeadLook, {
+  id: varint,
+  yaw: i8,
+});

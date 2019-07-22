@@ -1,4 +1,4 @@
-pub struct Animation {
-  pub entity_id: i32,
-  pub animation: u8,
-}
+define_packet!(Animation, {
+  entity_id: varint,
+  animation: u8,
+});

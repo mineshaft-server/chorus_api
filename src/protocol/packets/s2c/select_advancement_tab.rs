@@ -1,3 +1,5 @@
+use crate::util::identifier::Identifier;
+
 pub struct SelectAdvancementTab {
-  pub id: Option<String>,
+  pub id: Option<Identifier>,
 }

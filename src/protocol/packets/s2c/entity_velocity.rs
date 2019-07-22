@@ -1,6 +1,6 @@
-pub struct EntityVelocty {
-  pub id: i32,
-  pub x: i16,
-  pub y: i16,
-   pub z: i16,
-}
+define_packet!(EntityVelocty, {
+  id: varint,
+  x: i16,
+  y: i16,
+  z: i16,
+});

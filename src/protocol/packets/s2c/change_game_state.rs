@@ -1,4 +1,4 @@
-pub struct ChangeGameState {
-  pub reason: u8,
-  pub value: f32,
-}
+define_packet!(ChangeGameState, {
+  reason: u8,
+  value: f32,
+});

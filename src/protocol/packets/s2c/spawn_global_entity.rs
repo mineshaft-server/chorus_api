@@ -1,7 +1,7 @@
-pub struct SpawnGlobalEntity {
-  pub entity_id: i32,
-  pub type_: i8,
-  pub x: f64,
-  pub y: f64,
-  pub z: f64,
-}
+define_packet!(SpawnGlobalEntity, {
+  entity_id: varint,
+  type_: i8,
+  x: f64,
+  y: f64,
+  z: f64,
+});

@@ -1,7 +1,5 @@
-use crate::protocol::types::position::Position;
-
-pub struct BlockBreakAnimation {
-  pub entity_id: i32,
-  pub position: Position,
-  pub stage: i8,
-}
+define_packet!(BlockBreakAnimation, {
+  entity_id: varint,
+  position: position,
+  stage: i8,
+});

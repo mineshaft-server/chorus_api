@@ -1,5 +1,5 @@
-pub struct UpdateHealth {
-  pub health: f32,
-  pub food: i32,
-  pub saturation: f32,
-}
+define_packet!(UpdateHealth, {
+  health: f32,
+  food: varint,
+  saturation: f32,
+});

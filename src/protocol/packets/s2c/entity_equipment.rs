@@ -1,7 +1,5 @@
-use crate::protocol::types::slot::Slot;
-
-pub struct EntityEquipment {
-  pub id: i32,
-  pub slot: i8,
-  pub item: Slot,
-}
+define_packet!(EntityEquipment, {
+  id: varint,
+  slot: i8,
+  item: slot,
+});

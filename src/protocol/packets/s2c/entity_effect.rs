@@ -1,7 +1,7 @@
-pub struct EntityEffect {
-  pub id: i32,
-  pub effect_id: i32,
-  pub amplifier: i8,
-  pub duration: i32,
-  pub flags: i8,
-}
+define_packet!(EntityEffect, {
+  id: varint,
+  effect_id: varint,
+  amplifier: i8,
+  duration: varint,
+  flags: i8,
+});

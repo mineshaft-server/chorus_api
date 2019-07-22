@@ -1,8 +1,7 @@
-use crate::protocol::types::position::Position;
 
-pub struct BlockAction {
-  pub location: Position,
-  pub action: u8,
-  pub param: u8,
-  pub block_type: i32,
-}
+define_packet!(BlockAction, {
+  location: position,
+  action: u8,
+  param: u8,
+  block_type: varint,
+});

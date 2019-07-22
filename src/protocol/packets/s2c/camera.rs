@@ -1,3 +1,3 @@
-pub struct Camera {
-  pub id: i32,
-}
+define_packet!(Camera, {
+  id: varint,
+});

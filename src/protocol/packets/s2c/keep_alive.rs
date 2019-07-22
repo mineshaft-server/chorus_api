@@ -1,3 +1,3 @@
-pub struct KeepAlive {
-  pub id: i64,
-}
+define_packet!(KeepAlive, {
+  id: i64,
+});
